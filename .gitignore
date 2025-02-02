@@ -1,0 +1,15 @@
+# Executables
+*
+!*/
+!*.*
+*.exe
+
+# Code::Blocks
+bin/
+obj/
+*.layout
+*.depend
+*.cbp
+
+# Local files
+output.txt
