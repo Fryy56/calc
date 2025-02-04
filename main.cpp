@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <math.h>
 
 using std::cout, std::cin;
 
@@ -71,8 +72,18 @@ int prec(char a) { // No dependencies
         case '/':
             precedence = 1;
             break;
+        case '^':
+            precedence = 2;
+            break;
+        case 's':
+        case 'c':
+        case 't':
+        case 'r':
+        case 'l':
+            precedence = 3;
+            break;
         default:
-            printf("Unknown operator: %c", a);
+            printf("Error.");
             exit(0);
     }
 
@@ -81,7 +92,7 @@ int prec(char a) { // No dependencies
 
 std::string parse(std::string &a) { // No dependencies
     std::string parsed_input = "";
-    // Check for unary minus
+    // Check for unary minuses
     for (int i = 0; i < a.size() - 1; i++) {
         if (a[i] == '(' && a[i + 1] == '-') {
             parsed_input += "(0";
@@ -110,6 +121,19 @@ std::string parse(std::string &a) { // No dependencies
         exit(0);
     }
 
+    // Replace multicharacter operators with single character ones
+    for (int pos = parsed_input.find("sin"); pos != -1; pos = parsed_input.find("sin")) // Sine
+        parsed_input.replace(pos, 3, "s");
+    for (int pos = parsed_input.find("cos"); pos != -1; pos = parsed_input.find("cos")) // Cosine
+        parsed_input.replace(pos, 3, "c");
+    for (int pos = parsed_input.find("tg"); pos != -1; pos = parsed_input.find("tg")) // Tangent
+        parsed_input.replace(pos, 2, "t");
+    for (int pos = parsed_input.find("sqrt"); pos != -1; pos = parsed_input.find("sqrt")) // Square root
+        parsed_input.replace(pos, 4, "r");
+    for (int pos = parsed_input.find("ln"); pos != -1; pos = parsed_input.find("ln")) // Logarithm
+        parsed_input.replace(pos, 2, "l");
+    
+    
     return parsed_input;
 }
 
@@ -196,6 +220,39 @@ int main() {
                     exit(0);
                 }
                 break;
+            case '^':
+                num2 = pop();
+                num1 = pop();
+                push(pow(num1, num2));
+                break;
+            case 's':
+                push(sin(pop()));
+                break;
+            case 'c':
+                push(cos(pop()));
+                break;
+            case 't':
+                push(tan(pop()));
+                break;
+            case 'r':
+                num1 = pop();
+                if (num1 >= 0) // Handle imaginary roots (we're keeping it real :speaking_head: :fire:)
+                    push(sqrt(num1));
+                else {
+                    cout << "Error.";
+                    exit(0);
+                }
+                break;
+            case 'l':
+                num1 = pop();
+                if (num1 >= 0) // Handle negative values, how am I supposed to know this wth
+                    push(log(num1));
+                else {
+                    cout << "Error.";
+                    exit(0);
+                }
+                break;
+
             default:
                 push(double(stoi(i)));
         }
