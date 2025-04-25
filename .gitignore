@@ -13,3 +13,6 @@ obj/
 
 # Local files
 output.txt
+
+*.code-workspace
+.vscode/
