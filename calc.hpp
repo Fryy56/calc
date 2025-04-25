@@ -16,7 +16,7 @@ private:
 		Conv_Stack* next;
 	};
 
-	// Global data structures declarations
+	// Field data structures declarations
 	Conv_Stack* conv_st = nullptr;
 	Stack* st = nullptr;
 	std::vector <std::string> postfix;
@@ -85,7 +85,7 @@ private:
 		return precedence;
 	}
 
-	std::string parse(std::string &a) { // No dependencies
+	std::string parse(std::string& a) { // No dependencies
 		std::string parsed_input = "";
 		// Check for unary minuses
 		for (int i = 0; i < a.size() - 1; i++) {
@@ -132,11 +132,16 @@ private:
 	void conversion(std::string &input) { // 1 dependency - prec
 		std::string cur_num = "";
 		for (char cur_char : input)
-			if ('0' <= cur_char && cur_char <= '9') // If it's an operand
+			if (('0' <= cur_char && cur_char <= '9') || cur_char == '.') // If it's an operand
 				cur_num += cur_char;
 			else { // If it's an operator
 				// Add what number we have
 				if (cur_num != "") {
+					unsigned short pointCount = 0;
+					for (char i : cur_num)
+						pointCount += (i == '.');
+					if (cur_num[0] == '.' || cur_num[cur_num.size() - 1] == '.' || pointCount > 1)
+						throw(10);
 					postfix.push_back(cur_num);
 					cur_num = "";
 				}
@@ -165,8 +170,14 @@ private:
 			}
 
 		// Add what we have (again)
-		if (cur_num != "")
+		if (cur_num != "") {
+			unsigned short pointCount = 0;
+			for (char i : cur_num)
+				pointCount += (i == '.');
+			if (cur_num[0] == '.' || cur_num[cur_num.size() - 1] == '.' || pointCount > 1)
+				throw(10);
 			postfix.push_back(cur_num);
+		}
 		// Clear the conversion stack (finalize the conversion)
 		while (conv_st != nullptr)
 			postfix.push_back(std::string(1, conv_pop()));;
@@ -237,11 +248,11 @@ public:
 						break;
 
 					default:
-						push(double(stoi(i)));
+						push(stod(i));
 				}
 			}
 		}
-		catch (...) {
+		catch (int excep) {
 			return std::nullopt;
 		}
 
