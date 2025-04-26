@@ -258,4 +258,11 @@ public:
 
 		return pop();
 	}
+	static std::optional<double>calc_once(std::string expr) {
+		auto calc = new Calc;
+		auto ret = (*calc)(expr);
+		delete calc;
+
+		return ret;
+	}
 };

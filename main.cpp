@@ -6,8 +6,7 @@
 int main() {
 	std::string h;
 	std::cin >> h;
-	Calc clc;
-	if (auto res = clc(h))
+	if (auto res = Calc::calc_once(h))
 		std::cout << std::fixed << std::setprecision(6) << res.value();
 	else
 		std::cout << "Error";
